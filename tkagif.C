@@ -219,51 +219,6 @@ int TkAGIF::create(int argc, const char* argv[])
     out_->write((char*)&end,1);
   }
   
-  // *** Graphic Control Extension ***
-  {
-    // Extention Introducer
-    unsigned char ext = 0x21;
-    out_->write((char*)&ext,1);
-    // Extention Lable
-    unsigned char lable = 0xF9;
-    out_->write((char*)&lable,1);
-    // Block Size
-    unsigned char ss= 0x04;
-    out_->write((char*)&ss,1);
-
-    // Packed Field msb to lsb
-    // Reserved (3)
-    // Displosal Method (3): 0 none, 1 do not dispose, 2 restore bg, 3 restore
-    // User Input Flag (1): 0 none, 1 expected
-    // Transparent Color Flag (1): 0 not given, 1 color index
-    union qq {
-      struct pp {
-	unsigned int transparent: 1;
-	unsigned int input: 1;
-	unsigned int dispose: 3;
-	unsigned int reserve: 3;
-      } tt;
-      unsigned char cc;
-    };
-    union qq pkg;
-
-    pkg.tt.reserve =0;
-    pkg.tt.dispose =0;
-    pkg.tt.input =0;
-    pkg.tt.transparent =0;
-    out_->write((char*)&pkg.cc,1);
-
-    // Delay Time
-    //    unsigned short delay = 0x00;
-    out_->write((char*)&delay_,2);
-    // Transparent Color Index
-    unsigned char trans= 0x00;
-    out_->write((char*)&trans,1);
-    // Block Terminator
-    unsigned char end= 0x00;
-    out_->write((char*)&end,1);
-  }
-  
   return TCL_OK;
 }
 
@@ -317,6 +272,51 @@ int TkAGIF::add(int argc, const char* argv[])
   colorTable_ = new Color[MAXCOLORS];
 
   scanImage(pixels);
+  
+  // *** Graphic Control Extension ***
+  {
+    // Extention Introducer
+    unsigned char ext = 0x21;
+    out_->write((char*)&ext,1);
+    // Extention Lable
+    unsigned char lable = 0xF9;
+    out_->write((char*)&lable,1);
+    // Block Size
+    unsigned char ss= 0x04;
+    out_->write((char*)&ss,1);
+
+    // Packed Field msb to lsb
+    // Reserved (3)
+    // Displosal Method (3): 0 none, 1 do not dispose, 2 restore bg, 3 restore
+    // User Input Flag (1): 0 none, 1 expected
+    // Transparent Color Flag (1): 0 not given, 1 color index
+    union qq {
+      struct pp {
+	unsigned int transparent: 1;
+	unsigned int input: 1;
+	unsigned int dispose: 3;
+	unsigned int reserve: 3;
+      } tt;
+      unsigned char cc;
+    };
+    union qq pkg;
+
+    pkg.tt.reserve =0;
+    pkg.tt.dispose =0;
+    pkg.tt.input =0;
+    pkg.tt.transparent =0;
+    out_->write((char*)&pkg.cc,1);
+
+    // Delay Time
+    //    unsigned short delay = 0x00;
+    out_->write((char*)&delay_,2);
+    // Transparent Color Index
+    unsigned char trans= 0x00;
+    out_->write((char*)&trans,1);
+    // Block Terminator
+    unsigned char end= 0x00;
+    out_->write((char*)&end,1);
+  }
   
   // *** Local Image Descriptor ***
   {
